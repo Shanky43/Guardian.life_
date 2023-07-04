@@ -1,10 +1,9 @@
-
-import OnboardingModal from './Pages/OnboardingModal';
+import AllRoutes from './Routes/AllRoutes';
 
 function App() {
   return (
     <div >
-      <OnboardingModal />
+      <AllRoutes />
     </div>
   );
 }
