@@ -2,6 +2,7 @@ import { Box, Button, Container, Divider, Flex, Heading, IconButton, Input, Inpu
 import React from 'react';
 import { SearchIcon } from '@chakra-ui/icons';
 import { MdLocationPin } from "react-icons/md";
+import CarouselProduct from './CarouselProduct';
 
 const Homepage = () => {
   const handleSearch = (event) => {
@@ -50,7 +51,7 @@ const Homepage = () => {
                       <Box pt="10%">
                         <Heading size="4xl">Search Hospital</Heading>
                       </Box>
-                      <Box pt="5%" width="80%">
+                      <Box pt="5%" width="79%">
                         <Text fontSize="xl" width="80%">
                           Discover the best doctor, clinic & hospital the city nearest to you.
                         </Text>
@@ -67,6 +68,7 @@ const Homepage = () => {
                                     onChange={handleSearch}
                                     variant="filled"
                                     color="black"
+                                    bgColor={"white"}
                                     _hover={{ bg: "none" }}
                                     _focus={{ outline: "none", boxShadow: "none", borderColor: "transparent", bg: "white" }}
                                     h="100%"
@@ -78,6 +80,7 @@ const Homepage = () => {
                                       _hover={{ bg: "none" }}
                                       variant="ghost"
                                       position="absolute"
+                                      color='gray'
                                       top="50%"
                                       left="5px"
                                     />
@@ -98,11 +101,12 @@ const Homepage = () => {
                                     _hover={{ bg: "none" }}
                                     _focus={{ outline: "none", boxShadow: "none", borderColor: "transparent", bg: "white" }}
                                     h="100%"
+                                    bgColor={"white"}
                                   />
                                   <InputLeftElement display="flex" alignItems="center">
                                     <IconButton
                                       aria-label="location"
-                                      icon={<MdLocationPin />}
+                                      icon={<MdLocationPin size={22} color='gray' />}
                                       _hover={{ bg: "none" }}
                                       variant="ghost"
                                       position="absolute"
@@ -124,7 +128,11 @@ const Homepage = () => {
                     </VStack>
                   </Box>
                   {/* carousel starts here  */}
-                  <Box w="50%"></Box>
+                  <Box w="50%" mt={"10%"} borderRadius={"10px"}>
+                    <Box display="flex" justifyContent={"center"} alignItems={"center"} borderRadius={"10px"}>
+                      <CarouselProduct />
+                    </Box>
+                  </Box>
                 </Flex>
               </Box>
             </Container>
