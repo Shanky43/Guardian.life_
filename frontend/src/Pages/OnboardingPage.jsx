@@ -1,8 +1,11 @@
 import { Avatar, Box, Button, Container, Divider, Flex, HStack, Input, Text, VStack, Wrap, WrapItem } from '@chakra-ui/react'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Navbar from '../Component/Navbar'
 import OnboardingModal from './OnboardingModal'
 import { AiOutlineEdit } from "react-icons/ai"
+import UserDataTable from './UserDataTable'
+import { useDispatch, useSelector } from 'react-redux'
+import { getUserData } from '../Redux/HospitalData/action'
 
 
 const OnboardingPage = () => {
@@ -12,6 +15,7 @@ const OnboardingPage = () => {
         phoneNumber: "1234567890",
         location: "New Delhi"
     })
+    const dispatch = useDispatch()
     const [isEditing, setIsEditing] = useState(false)
 
     const handleChange = (e) => {
@@ -21,6 +25,15 @@ const OnboardingPage = () => {
             [name]: value
         }));
     }
+
+    useEffect(() => {
+        let userId = localStorage.getItem("userId")
+        dispatch(getUserData(userId))
+    }, [])
+
+    let userDatas = useSelector((state) =>
+        (state.GuardiansReducer.userData)
+    )
 
     const handleEdit = () => {
         setIsEditing(true);
@@ -124,8 +137,8 @@ const OnboardingPage = () => {
                     </Container >
                 </Box >
                 {/* OnBoarding details */}
-                <Box>
-
+                <Box mt="10">
+                    <UserDataTable userDatas={userDatas} />
                 </Box>
             </Box >
         </>

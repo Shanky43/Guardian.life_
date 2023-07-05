@@ -88,7 +88,7 @@ const MedicalFacilities = ({ hospitalData, setSearchText }) => {
 
             <Box overflowX="auto">
                 <Table variant="simple" mb={4}>
-                    <TableCaption placement="top" fo>
+                    <TableCaption placement="top" color={"#1367f6"} fontWeight={600} fontSize={"4xl"}>
                         Medical Facilities
                     </TableCaption>
                     <Thead>

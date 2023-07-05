@@ -20,7 +20,7 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import { BsFileTextFill } from "react-icons/bs"
+import { BsFileTextFill } from 'react-icons/bs';
 import { useDispatch } from 'react-redux';
 import { postGuardiansData } from '../Redux/HospitalData/action';
 
@@ -40,10 +40,21 @@ const OnboardingModal = () => {
     },
   });
   const toast = useToast();
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+  const generateRandomString = (length) => {
+    const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let result = '';
+    const charactersLength = characters.length;
+
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+
+    return result;
   };
 
   const handleEmergencyContactChange = (e) => {
@@ -54,14 +65,17 @@ const OnboardingModal = () => {
     }));
   };
 
-  // ...
-
   const handleNextStep = () => {
     if (step < 4) {
       if (
         (step === 1 && formData.phoneNumber.length >= 10 && /^[6-9]/.test(formData.phoneNumber)) ||
-        (step === 2 && formData.allergies.length > 0 && formData.medications.length > 0 && formData.conditions.length > 0) ||
-        (step === 3 && formData.emergencyContact.phoneNumber.length >= 10 && /^[6-9]/.test(formData.emergencyContact.phoneNumber))
+        (step === 2 &&
+          formData.allergies.length > 0 &&
+          formData.medications.length > 0 &&
+          formData.conditions.length > 0) ||
+        (step === 3 &&
+          formData.emergencyContact.phoneNumber.length >= 10 &&
+          /^[6-9]/.test(formData.emergencyContact.phoneNumber))
       ) {
         setStep((prevStep) => prevStep + 1);
       } else {
@@ -77,8 +91,6 @@ const OnboardingModal = () => {
     }
   };
 
-  // ...
-
   const handlePreviousStep = () => {
     if (step > 1) {
       setStep((prevStep) => prevStep - 1);
@@ -87,13 +99,22 @@ const OnboardingModal = () => {
 
   const handleSave = () => {
     // Handle saving the form data
-    dispatch(postGuardiansData(formData))
+    formData.userId = generateRandomString(24)
+    localStorage.setItem("userId", formData.userId)
+    dispatch(postGuardiansData(formData));
     onClose();
   };
 
+  const isFormEmpty = Object.values(formData).every((value) => value === '' || value === null);
+
   return (
     <>
-      <Button onClick={onOpen}><Flex> <BsFileTextFill size={18} /> <Text pl="3">Enroll</Text></Flex></Button>
+      <Button onClick={onOpen}>
+        <Flex>
+          <BsFileTextFill size={18} />
+          <Text pl="3">Enroll</Text>
+        </Flex>
+      </Button>
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
         <ModalContent>
@@ -104,12 +125,7 @@ const OnboardingModal = () => {
               <Stack spacing={4}>
                 <FormControl isRequired>
                   <FormLabel>Name</FormLabel>
-                  <Input
-                    name="name"
-                    value={formData.name}
-                    onChange={handleInputChange}
-                    required
-                  />
+                  <Input name="name" value={formData.name} onChange={handleInputChange} required />
                 </FormControl>
                 <FormControl isRequired>
                   <FormLabel>Email</FormLabel>
@@ -124,9 +140,9 @@ const OnboardingModal = () => {
                 <FormControl isRequired>
                   <FormLabel>Phone Number</FormLabel>
                   <InputGroup>
-                    <InputLeftAddon children='+91' />
+                    <InputLeftAddon children="+91" />
                     <Input
-                      type='number'
+                      type="number"
                       name="phoneNumber"
                       value={formData.phoneNumber}
                       onChange={handleInputChange}
@@ -182,8 +198,10 @@ const OnboardingModal = () => {
                 <FormControl isRequired>
                   <FormLabel>Contact Phone Number</FormLabel>
                   <InputGroup>
-                    <InputLeftAddon children='+91' />
-                    <Input type='tel' placeholder='phone number...'
+                    <InputLeftAddon children="+91" />
+                    <Input
+                      type="tel"
+                      placeholder="phone number..."
                       value={formData.emergencyContact.phoneNumber}
                       onChange={handleEmergencyContactChange}
                       required
@@ -220,19 +238,13 @@ const OnboardingModal = () => {
                   <FormLabel>Medical Conditions</FormLabel>
                   <Textarea value={formData.conditions} isReadOnly />
                 </FormControl>
-                <FormControl >
+                <FormControl>
                   <FormLabel>Contact Name</FormLabel>
-                  <Input
-                    value={formData.emergencyContact.name}
-                    isReadOnly
-                  />
+                  <Input value={formData.emergencyContact.name} isReadOnly />
                 </FormControl>
                 <FormControl>
                   <FormLabel>Contact Phone Number</FormLabel>
-                  <Input
-                    value={formData.emergencyContact.phoneNumber}
-                    isReadOnly
-                  />
+                  <Input value={formData.emergencyContact.phoneNumber} isReadOnly />
                 </FormControl>
               </Stack>
             )}
@@ -246,7 +258,7 @@ const OnboardingModal = () => {
             {step < 4 ? (
               <Button onClick={handleNextStep}>Next</Button>
             ) : (
-              <Button colorScheme="blue" onClick={handleSave}>
+              <Button colorScheme="blue" onClick={handleSave} isDisabled={isFormEmpty}>
                 Save
               </Button>
             )}

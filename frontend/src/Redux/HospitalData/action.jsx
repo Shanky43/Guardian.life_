@@ -2,8 +2,7 @@ import axios from "axios";
 import {
     GET_GUARDIANS_DATA_FAILURE, GET_GUARDIANS_DATA_REQUEST, GET_GUARDIANS_DATA_SUCCESSFULL,
     PATCH_USER_DATA_FAILURE, PATCH_USER_DATA_REQUEST, PATCH_USER_DATA_SUCCESS, POST_USER_DATA_REQUEST,
-    POST_USER_DATA_SUCCESSFUL,
-    POST_USER_DATA_FAILURE
+    POST_USER_DATA_SUCCESSFUL, POST_USER_DATA_FAILURE, GET_USER_DATA_FAILURE, GET_USER_DATA_REQUEST, GET_USER_DATA_SUCCESSFUL
 } from "./actionTypes";
 // import Cookies from 'js-cookie';
 
@@ -38,7 +37,20 @@ const postGuardiansData = (data) => (dispatch) => {
         });
 };
 
+const getUserData = (userId) => (dispatch) => {
+    dispatch({ type: GET_USER_DATA_REQUEST });
 
+    axios
+        .get(`http://localhost:8080/usersData?userId=${userId}`)
+        .then((res) => {
+            console.log(res.data);
+            dispatch({ type: GET_USER_DATA_SUCCESSFUL, payload: res.data });
+        })
+        .catch((err) => {
+            console.log(err);
+            dispatch({ type: GET_USER_DATA_FAILURE });
+        });
+};
 
 const patchGuardiansData = (id, updatedData) => (dispatch) => {
     dispatch({ type: PATCH_USER_DATA_REQUEST });
@@ -54,4 +66,4 @@ const patchGuardiansData = (id, updatedData) => (dispatch) => {
             throw err;
         });
 };
-export { getGuardiansData, patchGuardiansData, postGuardiansData };
+export { getGuardiansData, patchGuardiansData, postGuardiansData, getUserData };
