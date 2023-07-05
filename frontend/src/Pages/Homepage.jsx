@@ -1,18 +1,66 @@
-import { Box, Button, Container, Divider, Flex, Heading, IconButton, Input, InputGroup, InputLeftElement, Text, VStack } from '@chakra-ui/react';
-import React from 'react';
+import { Box, Button, Container, Divider, Flex, Heading, IconButton, Input, InputGroup, InputLeftElement, Spinner, Text, VStack } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
 import { SearchIcon } from '@chakra-ui/icons';
 import { MdLocationPin } from "react-icons/md";
 import CarouselProduct from './CarouselProduct';
+import Navbar from '../Component/Navbar';
+// import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getGuardiansData } from '../Redux/HospitalData/action';
+import HospitalTable from './HospitalTable';
+import useDebounce from './useDebounce';
+// import OnboardingModal from './OnboardingModal';
 
 const Homepage = () => {
+  // const [toOpen, setToOpen] = useState(false)
+  const [searchText, setSearchText] = useState("")
+  const [hospitalData, setHospitalData] = useState([])
+  const [isLoading, setIsLoading] = useState(false);
+  const debouncedSearchQuery = useDebounce(searchText, 1000);
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    dispatch(getGuardiansData(searchText))
+  }, [])
+  useEffect(() => {
+    if (debouncedSearchQuery) {
+      setIsLoading(true);
+      dispatch(getGuardiansData(searchText))
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 1000);
+    }
+
+
+  }, [debouncedSearchQuery])
+  const data = useSelector((state) =>
+    (state.GuardiansReducer.guardiansdata)
+  )
+  // console.log(searchText, "search text")
+
   const handleSearch = (event) => {
     // Perform search logic here
-    const searchTerm = event.target.value;
-    // ...
+    setSearchText(event.target.value)
   };
 
+  useEffect(() => {
+    setHospitalData(data)
+  }, [data])
+  const handleSearchButton = () => {
+    dispatch(getGuardiansData(searchText))
+  }
+
+
+  // useEffect(() => {
+  //   const timeout = setTimeout(() => {
+  //     setToOpen(true)
+  //   }, 5000);
+
+  //   return () => clearTimeout(timeout);
+  // }, []);
   return (
     <div>
+      {/* <OnboardingModal toOpen={toOpen} showBtn={false} /> */}
       <Box
         backgroundImage="url('https://www.verywellhealth.com/thmb/oG6M4FE9Lw5vsb--LHwf_SaqiR4=/1255x836/filters:no_upscale():max_bytes(150000):strip_icc()/iStock-695645846-5a84704dc064710036fb5f61.jpg')"
         backgroundPosition="center"
@@ -23,22 +71,7 @@ const Homepage = () => {
       >
         <Box bg="rgba(0, 0, 0, 0.6)" w="100%" h="100%">
           {/* nav-bar start here */}
-          <Flex align="center" justifyContent="space-between">
-            {/* for logo */}
-            <Box p={5} w="40%">
-              <Heading as="h1" color="#049fe5" size="2xl">
-                Healthcare Connect
-              </Heading>
-            </Box>
-
-            <Box w="50%" color="white">
-              <Flex float="center" justifyContent="space-around">
-                <Box fontSize="xl" fontWeight={600} cursor="pointer">Home</Box>
-                <Box fontSize="xl" fontWeight={600} cursor="pointer">About</Box>
-                <Box fontSize="xl" fontWeight={600} cursor="pointer">Login</Box>
-              </Flex>
-            </Box>
-          </Flex>
+          <Navbar textColor={"white"} />
           {/* below nav-bar or content section */}
           <Divider orientation="horizontal" />
           <Box>
@@ -118,7 +151,7 @@ const Homepage = () => {
                               </Flex>
                             </Box>
                             <Box width="20%" display="flex" alignItems="center" pr="5">
-                              <Button bg="#1367f6" h="6vh" _hover={{ bg: "none" }} color="white" w="100%" fontSize="xl">
+                              <Button bg="#1367f6" h="6vh" _hover={{ bg: "none", color: "#1367f6" }} color="white" w="100%" fontSize="xl" onClick={handleSearchButton}>
                                 Search
                               </Button>
                             </Box>
@@ -138,6 +171,23 @@ const Homepage = () => {
             </Container>
           </Box>
         </Box>
+        {/* table start from here */}
+        <Box display="flex" justifyContent="center" alignItems="center" width="100%" height="100vh">
+          {isLoading ? (
+            <Spinner
+              thickness="4px"
+              speed="0.65s"
+              emptyColor="gray.200"
+              color="blue.500"
+              size="xl"
+            />
+          ) : (
+            <Box width="80%" margin="auto" minH="80%">
+              <HospitalTable hospitalData={hospitalData} setSearchText={setSearchText} />
+            </Box>
+          )}
+        </Box>
+
       </Box>
     </div>
   );
